@@ -68,14 +68,14 @@ void test_throw_catch(void)
 	try {
 		throw mmap_allocator_exception("Test");
 		assert(0);
-	} catch (mmap_allocator_exception e) {
+	} catch (const mmap_allocator_exception& e) {
 		fprintf(stderr, "Exception message (expected): %s\n", e.what());
 		assert(strcmp(e.what(), "Test") == 0);
 	}
 	try {
 		do_throw();
 		assert(0);
-	} catch (mmap_allocator_exception e) {
+	} catch (const mmap_allocator_exception& e) {
 		fprintf(stderr, "Exception message (expected): %s\n", e.what());
 	}
 }
@@ -92,7 +92,7 @@ void test_exceptions(void)
 		vector<int, mmap_allocator<int> > int_vec(1024, 0, mmap_allocator<int>("", READ_ONLY));
 			/* Default constructor used, allocate will fail */
 		assert(0);
-	} catch (mmap_allocator_exception e) {
+	} catch (const mmap_allocator_exception& e) {
 		fprintf(stderr, "Exception message (expected): %s\n", e.what());
 		exception_thrown = true;
 	}
@@ -102,7 +102,7 @@ void test_exceptions(void)
 	try {
 		vector<int, mmap_allocator<int> > int_vec_notexsting_file(1024, 0, mmap_allocator<int>("karin", READ_ONLY)); /* no such file or directory */
 		assert(0);
-	} catch (mmap_allocator_exception e) {
+	} catch (const mmap_allocator_exception& e) {
 		fprintf(stderr, "Exception message (expected): %s\n", e.what());
 		exception_thrown = true;
 	}
@@ -112,7 +112,7 @@ void test_exceptions(void)
 	try {
 		vector<int, mmap_allocator<int> > int_vec_wrong_alignment_file(512, 0, mmap_allocator<int>(TESTFILE, READ_WRITE_PRIVATE, 123)); /* wrong alignment */
 		/* No exception here expected */
-	} catch (mmap_allocator_exception &e) {
+	} catch (const mmap_allocator_exception& e) {
 		fprintf(stderr, "Exception message (not expected): %s\n", e.what());
 		exception_thrown = true;
 	}
@@ -354,7 +354,7 @@ void test_new_interface(void)
 	try {
 		vec.mmap_file(TESTFILE, READ_ONLY, 0, 1024);
 		assert(0);
-	} catch (mmap_allocator_exception e) {
+	} catch (const mmap_allocator_exception& e) {
 		fprintf(stderr, "Exception message (expected): %s\n", e.what());
 	}
 	vec.munmap_file();
@@ -415,7 +415,7 @@ void read_large_file(enum access_mode mode)
 		assert(vec[i] == i);
 	}
 	gettimeofday(&t2, NULL);
-	fprintf(stderr, "Mode: %d Time: %lu.%06lu\n", mode, (t2.tv_sec - t.tv_sec)-(t2.tv_usec < t.tv_usec), (t2.tv_usec < t.tv_usec)*1000000 + (t2.tv_usec - t.tv_usec));
+	fprintf(stderr, "Mode: %d Time: %lu.%06d\n", mode, (t2.tv_sec - t.tv_sec)-(t2.tv_usec < t.tv_usec), (t2.tv_usec < t.tv_usec)*1000000 + (t2.tv_usec - t.tv_usec));
 }
 
 void test_large_file(void)
